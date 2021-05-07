@@ -73,7 +73,7 @@ def train(resume=0, epochs=1):
     # Save model
     check_point = {'net': MLP.state_dict(),
                    'optimizer': optimizer.state_dict()}
-    torch.save(check_point, 'check_point_epoch' +
+    torch.save(check_point, './saved_model/check_point_epoch' +
                str(epochs)+'_hiddensize_'+str(hidden_size)+'.pth')
 
 
@@ -90,8 +90,8 @@ MLP = nn.Sequential(
 optimizer = optim.Adam(MLP.parameters(), lr=0.01)
 # Load model
 optimizer.load_state_dict(torch.load(
-    'check_point_epoch'+str(epochs)+'_hiddensize_'+str(hidden_size)+'.pth')['optimizer'])
-MLP.load_state_dict(torch.load('check_point_epoch'+str(epochs) +
+    './saved_model/check_point_epoch'+str(epochs)+'_hiddensize_'+str(hidden_size)+'.pth')['optimizer'])
+MLP.load_state_dict(torch.load('./saved_model/check_point_epoch'+str(epochs) +
                     '_hiddensize_'+str(hidden_size)+'.pth')['net'])
 
 # Evaluation
