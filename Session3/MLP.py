@@ -103,5 +103,5 @@ def test(epoch):
     print('Epoch ', epochs)
     print('Accuracy on test data: ', num_true_preds/testset.__len__())
 
-
+#train(resume, epochs)
 test(epoch=10)
