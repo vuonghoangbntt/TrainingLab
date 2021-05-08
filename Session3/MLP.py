@@ -6,7 +6,7 @@ import torch.optim as optim
 NUM_CLASSES = 20
 hidden_size = 50
 batch_size = 50
-resume = 0
+resume = 0  # Train from resume epoch
 epochs = 10
 train_path = './Session1/train_tf_idf.txt'
 test_path = './Session1/test_tf_idf.txt'
@@ -77,30 +77,31 @@ def train(resume=0, epochs=1):
                str(epochs)+'_hiddensize_'+str(hidden_size)+'.pth')
 
 
-# Training
-train(resume, epochs)
+def test(epoch):
+    # Load model for test
+    MLP = nn.Sequential(
+        nn.Linear(vocab_size, hidden_size),
+        nn.Sigmoid(),
+        nn.Linear(hidden_size, NUM_CLASSES),
+        nn.Softmax()
+    )
+    optimizer = optim.Adam(MLP.parameters(), lr=0.01)
+    # Load model
+    optimizer.load_state_dict(torch.load(
+        './saved_model/check_point_epoch'+str(epoch)+'_hiddensize_'+str(hidden_size)+'.pth')['optimizer'])
+    MLP.load_state_dict(torch.load('./saved_model/check_point_epoch'+str(epoch) +
+                        '_hiddensize_'+str(hidden_size)+'.pth')['net'])
 
-# Load model for test
-MLP = nn.Sequential(
-    nn.Linear(vocab_size, hidden_size),
-    nn.Sigmoid(),
-    nn.Linear(hidden_size, NUM_CLASSES),
-    nn.Softmax()
-)
-optimizer = optim.Adam(MLP.parameters(), lr=0.01)
-# Load model
-optimizer.load_state_dict(torch.load(
-    './saved_model/check_point_epoch'+str(epochs)+'_hiddensize_'+str(hidden_size)+'.pth')['optimizer'])
-MLP.load_state_dict(torch.load('./saved_model/check_point_epoch'+str(epochs) +
-                    '_hiddensize_'+str(hidden_size)+'.pth')['net'])
+    # Evaluation
+    num_true_preds = 0
+    testset = Data(vocab_size, test_path)
+    test_loader = DataLoader(testset, batch_size, shuffle=False)
+    for test_data, test_labels in test_loader:
+        test_plabels_eval = MLP(test_data)
+        labels = torch.argmax(test_plabels_eval, axis=1)
+        num_true_preds += float(torch.sum(labels == test_labels))
+    print('Epoch ', epochs)
+    print('Accuracy on test data: ', num_true_preds/testset.__len__())
 
-# Evaluation
-num_true_preds = 0
-testset = Data(vocab_size, test_path)
-test_loader = DataLoader(testset, batch_size, shuffle=False)
-for test_data, test_labels in test_loader:
-    test_plabels_eval = MLP(test_data)
-    labels = torch.argmax(test_plabels_eval, axis=1)
-    num_true_preds += float(torch.sum(labels == test_labels))
-print('Epoch ', epochs)
-print('Accuracy on test data: ', num_true_preds/testset.__len__())
+
+test(epoch=10)
