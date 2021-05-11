@@ -3,9 +3,10 @@ import random as random
 import matplotlib.pyplot as plt
 import math
 
-vocab_path = '../Session1/words_idf.txt'
-train_path = '../Session1/train_tf_idf.txt'
-test_path = '../Session1/test_tf_idf.txt'
+vocab_path = './Session1/words_idf.txt'
+train_path = './Session1/train_tf_idf.txt'
+test_path = './Session1/test_tf_idf.txt'
+NUM_CLUSTERS = 20
 
 
 class Member:
@@ -139,6 +140,6 @@ class Kmeans:
         return purity*1./len(self._data)
 
 
-kmeans = Kmeans(20)
-kmeans.run(100, 'max_iters', 20)
+kmeans = Kmeans(NUM_CLUSTERS)
+kmeans.run(100, 'max_iters', NUM_CLUSTERS)
 print(kmeans.compute_purity())
