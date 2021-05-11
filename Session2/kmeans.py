@@ -3,6 +3,10 @@ import random as random
 import matplotlib.pyplot as plt
 import math
 
+vocab_path = '../Session1/words_idf.txt'
+train_path = '../Session1/train_tf_idf.txt'
+test_path = '../Session1/test_tf_idf.txt'
+
 
 class Member:
     def __init__(self, r_d, label=None, doc_id=None):
@@ -44,7 +48,7 @@ class Kmeans:
             return np.array(vector)
         with open(data_path, 'r') as f:
             lines = f.read().split('\n')
-        with open('../Session1/words_idf.txt', 'r') as f:
+        with open(vocab_path, 'r') as f:
             self.vocab_size = len(f.read().split('\n'))
         self._data = []
         self._label_count = {}
@@ -108,7 +112,7 @@ class Kmeans:
                 return False
 
     def run(self, seed_value, criteration, threshold):
-        self.load_data('../Session1/train_tf_idf.txt')
+        self.load_data(train_path)
         self.random_init(seed_value)
         self.iteration = 0
         while True:
