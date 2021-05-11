@@ -7,7 +7,7 @@ NUM_CLASSES = 20
 hidden_size = 50
 batch_size = 50
 resume = 0  # Train from resume epoch
-epochs = 10
+epochs = 10  # Epoch ends
 train_path = './Session1/train_tf_idf.txt'
 test_path = './Session1/test_tf_idf.txt'
 vocab_path = './Session1/words_idf.txt'
@@ -62,7 +62,7 @@ def train(resume=0, epochs=1):
     train_loader = DataLoader(trainset, batch_size, shuffle=True)
     test_loader = DataLoader(testset, batch_size, shuffle=False)
     criterion = nn.CrossEntropyLoss()
-    for epoch in range(epochs):
+    for epoch in range(resume+1, epochs+1):
         for train_data, train_labels in train_loader:
             predict = MLP(train_data)
             loss = criterion(predict, train_labels)
@@ -102,6 +102,7 @@ def test(epoch):
         num_true_preds += float(torch.sum(labels == test_labels))
     print('Epoch ', epochs)
     print('Accuracy on test data: ', num_true_preds/testset.__len__())
+
 
 #train(resume, epochs)
 test(epoch=10)
